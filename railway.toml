@@ -1,0 +1,26 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "npm start"
+
+[env]
+NODE_ENV = "production"
+PORT = "3001"
+
+# 数据库配置 - Railway 会自动提供 PostgreSQL 数据库
+DATABASE_TYPE = "postgres"
+
+# 安全配置
+JWT_SECRET = "请在此处生成一个随机的JWT密钥"
+
+# DeepSeek API 配置
+DEEPSEEK_API_KEY = "请在此处填写您的DeepSeek_API密钥"
+
+# 业务配置
+FREE_TIER_WORD_LIMIT = "1000"
+FREE_TIER_API_LIMIT = "100"
+COST_PER_WORD = "0.0001"
+
+# 健康检查
+HEALTH_CHECK_PATH = "/health"

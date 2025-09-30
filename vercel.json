@@ -1,11 +1,32 @@
 {
-    "version": 2,
-    "builds": [
-        { "src": "index.html", "use": "@vercel/static" },
-        { "src": "server/index.js", "use": "@vercel/node" }
-    ],
-    "routes": [
-        { "src": "/api/.*", "dest": "server/index.js" },
-        { "src": "/.*", "dest": "index.html" }
-    ]
+  "version": 2,
+  "name": "ai-novel-platform-frontend",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  },
+  "build": {
+    "env": {
+      "VITE_API_URL": "@vite_api_url"
+    }
+  },
+  "functions": {
+    "frontend/**/*.html": {
+      "includeFiles": "frontend/dist/**"
+    }
+  }
 }

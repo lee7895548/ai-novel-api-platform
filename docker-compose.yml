@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001/api
+    depends_on:
+      - backend
+    networks:
+      - ai-novel-network
+
+  # 后端 API 服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/ai_novel_platform
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-production-jwt-secret-change-this
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ai-novel-network
+
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=ai_novel_platform
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - ai-novel-network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-novel-network
+
+  # Nginx 反向代理 (生产环境)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - ai-novel-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  ai-novel-network:
+    driver: bridge
