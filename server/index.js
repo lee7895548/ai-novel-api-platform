@@ -2,6 +2,11 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 
+// 添加根路径路由
+app.get('/', (req, res) => {
+    res.send('AI Novel API Platform 服务已启动');
+});
+
 // 中间层 API 扣费逻辑
 app.post('/api/generate', async (req, res) => {
     try {
