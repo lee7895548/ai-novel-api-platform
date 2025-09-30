@@ -8,10 +8,7 @@ app.get('/', (req, res) => {
 
 app.post('/api/generate', async (req, res) => {
     try {
-        const userBalance = await checkUserBalance(req.headers.authorization);
-        if (userBalance <= 0) {
-            return res.status(403).json({ error: '余额不足，请充值' });
-        }
+        // 暂时移除余额检查
         const response = await axios.post('https://api.deepseek.com/chat/completions', req.body);
         res.status(200).json(response.data);
     } catch (error) {
